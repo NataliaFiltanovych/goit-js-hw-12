@@ -17,5 +17,5 @@ export async function getImagesByQuery(query, page) {
   };
 
   const res = await axios.get(url, { params });
-  return res.data.hits;
+  return res.data;
 }
