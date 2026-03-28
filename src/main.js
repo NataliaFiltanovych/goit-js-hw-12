@@ -58,14 +58,6 @@ refs.formEl.addEventListener('submit', async e => {
     }
     createGallery(res.hits);
     totalPages = Math.ceil(res.totalHits / PER_PAGE);
-    if (page >= totalPages) {
-      hideLoadMoreButton();
-      iziToast.show({
-        message: "We're sorry, but you've reached the end of search results.",
-      });
-    } else {
-      showLoadMoreButton();
-    }
   } catch {
     iziToast.show({
       message: 'Sorry, error. Please try again later!',
@@ -74,7 +66,14 @@ refs.formEl.addEventListener('submit', async e => {
       position: 'topRight',
     });
   }
-
+  if (page >= totalPages) {
+    hideLoadMoreButton();
+    iziToast.show({
+      message: "We're sorry, but you've reached the end of search results.",
+    });
+  } else {
+    showLoadMoreButton();
+  }
   hideLoader();
 
   e.target.reset();
@@ -88,14 +87,14 @@ refs.loadMore.addEventListener('click', async () => {
   try {
     const res = await getImagesByQuery(query, page);
     createGallery(res.hits);
-    if (page >= totalPages) {
-      hideLoadMoreButton();
-      iziToast.show({
-        message: "We're sorry, but you've reached the end of search results.",
-      });
-    } else {
-      showLoadMoreButton();
-    }
+
+    const elem = refs.listElem.lastElementChild;
+    const height = elem.getBoundingClientRect().height;
+
+    window.scrollBy({
+      top: height * 2,
+      behavior: 'smooth',
+    });
   } catch {
     iziToast.show({
       message: 'Sorry, error. Please try again later!',
@@ -103,6 +102,15 @@ refs.loadMore.addEventListener('click', async () => {
       color: 'red',
       position: 'topRight',
     });
+  }
+
+  if (page >= totalPages) {
+    hideLoadMoreButton();
+    iziToast.show({
+      message: "We're sorry, but you've reached the end of search results.",
+    });
+  } else {
+    showLoadMoreButton();
   }
 
   hideLoader();
